@@ -22,18 +22,18 @@ struct HttpLogLine {
 impl HttpLogLine {
     fn to_line(&self, column_sizes: &[usize]) -> String {
         let line = format!(
-            "{:<w0$} {:<w1$} {:<w2$} [{:<w3$}] \"{} {} {:<w6$}\" {:<w7$} {:<w8$} \"{}\" \"{}\" {:<w11$}",
+            "{:<w0$} {:<w1$} {:<w2$} [{:<w3$}] \"{} {} {:<w6$}\" {:<w7$} {:<w8$} \"{:<w9$} \"{:<w10$} {:<w11$}",
             as_column(&self.host, column_sizes[0]),
             as_column(&self.client_identity, column_sizes[1]),
             as_column(&self.user_id, column_sizes[2]),
             as_column(&self.date_time, column_sizes[3]),
             as_column(&self.http_method, column_sizes[4]),
             as_column(&self.requested_url, column_sizes[5]),
-            self.http_protocol_version.to_string(),
-            self.http_status_code.to_string(),
-            self.response_body_size.to_string(),
-            self.referrer_url.to_string(),
-            self.agent.to_string(),
+            as_column(&self.http_protocol_version.to_string(), column_sizes[6]),
+            as_column(&self.http_status_code.to_string(), column_sizes[7]),
+            as_column(&self.response_body_size.to_string(), column_sizes[8]),
+            as_column(&[&self.referrer_url.to_string(), "\""].join(""), column_sizes[9]),
+            as_column(&[&self.agent.to_string(), "\""].join(""), column_sizes[10]),
             self.code.to_string(),
             w0 = column_sizes[0],
             w1 = column_sizes[1],
@@ -42,6 +42,8 @@ impl HttpLogLine {
             w6 = column_sizes[6],
             w7 = column_sizes[7],
             w8 = column_sizes[8],
+            w9 = column_sizes[9],
+            w10 = column_sizes[10],
             w11 = column_sizes[11],
         );
         line
